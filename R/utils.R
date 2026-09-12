@@ -1,0 +1,147 @@
+title_kebab <- function(title) {
+  # https://stackoverflow.com/a/38171652/7322615
+  stringi::stri_trans_general((title), "latin-ascii") |>
+    stringr::str_to_lower() |>
+    stringr::str_remove_all("[^[:alnum:][:space:]]") |>
+    stringr::str_replace_all(" ", "-")
+}
+
+
+long_yaml_text <- function(txt) {
+  stringr::str_wrap(txt, width = 77) |>
+    stringr::str_replace_all("[\n]", "\n  ")
+}
+
+
+prepare_description <- function(txt) {
+  ifelse(txt != "",
+    paste0("description:  |\n  ", long_yaml_text(txt)),
+    'description: ""'
+  )
+}
+
+prepare_image_name <- function(txt) {
+  ifelse(is.null(txt), "", txt$name)
+}
+
+prepare_categories <- function(cat, new) {
+  # Trim whitespace from new categories
+  new <- stringr::str_trim(new)
+  # Remove accidental trailing comma
+  if (stringr::str_ends(new, ",")) {
+    new <- stringr::str_sub(new, end = -2L)
+  }
+  # Split comma-separated new entries and trim each
+  new_cats <- stringr::str_split_1(new, ",") |>
+    stringr::str_trim()
+  # Combine, drop empty strings, sort, flatten
+  c(cat, new_cats) |>
+    stringr::str_subset(".+") |>
+    stringr::str_sort() |>
+    stringr::str_flatten(collapse = ", ")
+}
+
+
+prepare_yaml <- function(args, desc,
+                         img_name, cats, draft, fields) {
+  # if show_empty_fields == TRUE
+  if (fields) {
+      paste(c(
+        "---",
+        glue::glue('title: "{args$file_data$title}"'),
+        glue::glue('subtitle: "{args$subtitle}"'),
+        glue::glue("{desc}"),
+        glue::glue('author: "{args$author}"'),
+        glue::glue('date: "{args$date}"'),
+        glue::glue('image: "{img_name}"'),
+        glue::glue('image-alt: "{args$alt}"'),
+        glue::glue("categories: [{cats}]"),
+        # date-modified starts always with date choice
+        glue::glue('date-modified: "{args$date}"'),
+        glue::glue("draft: {draft}"),
+        "---\n"
+      ), collapse = "\n")
+    # if show_empty_fields == FALSE
+  } else {
+      paste(c(
+          "---",
+          glue::glue('title: "{args$file_data$title}"'),
+          if (args$subtitle != "") {
+            glue::glue('subtitle: "{args$subtitle}"')},
+          if (args$desc != "") {
+            glue::glue("{desc}")},
+          glue::glue('author: "{args$author}"'),
+          glue::glue('date: "{args$date}"'),
+          if (img_name != "") {
+            glue::glue('image: "{img_name}"')
+            glue::glue('image-alt: "{args$alt}"')},
+          if (cats != "") {
+            glue::glue("categories: [{cats}]")},
+          # date-modified starts always with date choice
+          if (args$date) {
+            glue::glue('date-modified: "{args$date}"')},
+          glue::glue("draft: {draft}"),
+          "---\n"
+      ), collapse = "\n")
+
+  }
+
+}
+
+extract_cat_brackets <- function(f) {
+  stringr::str_extract(f, "categories:\\s*\\[[\\s\\S]*\\]") |>
+    stringr::str_remove("categories:\\s*\\[") |>
+    stringr::str_remove("\\]") |>
+    stringr::str_split_1(",") |>
+    stringr::str_remove_all('\"') |>
+    stringr::str_trim()
+}
+
+extract_cat_dashes <- function(f) {
+  stringr::str_remove(f, "^[\\s\\S]*categories:\\s") |>
+    stringr::str_remove("\\n[:alpha:].*\\n(.*)\\n---") |>
+    stringr::str_split_1("\\n\\s*-") |>
+    stringr::str_remove_all('\"') |>
+    stringr::str_trim() |>
+    stringi::stri_omit_empty("")
+}
+
+
+get_cat <- function() {
+  f_list <- list()
+  cat_vec <- NULL
+
+  # if no "posts" folder exists
+  # there are no categories
+  if (!fs::dir_exists(path = here::here("posts"))) {
+    return(cat_vec)
+    # fs::dir_create(path = here::here("posts"))
+  }
+
+  # find all "*.qmd" files under folder "posts"
+  fp <- fs::dir_ls(path = here::here("posts"), recurse = TRUE, glob = "*.qmd")
+  # check if there are already files inside the folder "posts"
+  if (length(fp) == 0) {
+    return(NULL)
+  }
+
+  # read file contents into list variable
+  for (i in 1:length(fp)) {
+    f_list[i] <- readr::read_file(fp[i]) |>
+      stringr::str_extract(stringr::regex("^---[\\s\\S]*?^---\\n", multiline = TRUE))
+  }
+
+  # extract yaml content
+  for (i in 1:length(f_list)) {
+    if (stringr::str_detect(f_list[[i]], "categories:")) {
+      if (stringr::str_detect(f_list[[i]], "categories:\\s*\\[")) { # bracket notation
+        cat_vec <- c(cat_vec, extract_cat_brackets(f_list[[i]]))
+      } else {
+        cat_vec <- c(cat_vec, extract_cat_dashes(f_list[[i]]))  # dash notation
+      }
+    }
+  }
+  return(unique(cat_vec))
+}
+
+

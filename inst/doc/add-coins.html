@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Peter Baumgartner" />
+
+<meta name="date" content="2026-09-03" />
+
+<title>Adding COinS Metadata for Zotero</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Adding COinS Metadata for Zotero</h1>
+<h4 class="author">Peter Baumgartner</h4>
+<h4 class="date">2026-09-03</h4>
+
+
+<div id="TOC">
+<ul>
+<li><a href="#using-add_coins" id="toc-using-add_coins">Using
+<code>add_coins()</code></a></li>
+<li><a href="#configuration" id="toc-configuration">Configuration</a></li>
+<li><a href="#editing-coins-after-creation" id="toc-editing-coins-after-creation">Editing COinS After
+Creation</a></li>
+<li><a href="#backup-mode" id="toc-backup-mode">Backup Mode</a></li>
+<li><a href="#testing-your-coins" id="toc-testing-your-coins">Testing
+Your COinS</a></li>
+<li><a href="#background-what-is-coins" id="toc-background-what-is-coins">Background: What is COinS?</a></li>
+<li><a href="#why-use-coins" id="toc-why-use-coins">Why Use
+COinS?</a></li>
+<li><a href="#the-standard-behind-coins" id="toc-the-standard-behind-coins">The Standard Behind COinS</a></li>
+<li><a href="#websites-using-coins" id="toc-websites-using-coins">Websites Using COinS</a></li>
+<li><a href="#how-zotero-uses-coins" id="toc-how-zotero-uses-coins">How
+Zotero Uses COinS</a></li>
+<li><a href="#integration-with-academic-workflow" id="toc-integration-with-academic-workflow">Integration with Academic
+Workflow</a></li>
+<li><a href="#further-reading" id="toc-further-reading">Further
+Reading</a></li>
+<li><a href="#see-also" id="toc-see-also">See Also</a></li>
+</ul>
+</div>
+
+<p><code>add_coins()</code> appends <a href="https://en.wikipedia.org/wiki/COinS">COinS</a> metadata to a
+finished Quarto blog post so reference managers like Zotero can
+automatically detect it and import the title, author, date, and other
+citation details into your library.</p>
+<p>This article covers everyday usage first. If you want to understand
+what COinS actually is and why it works the way it does, see <a href="#background-what-is-coins">Background: What is COinS?</a> further
+down.</p>
+<div id="using-add_coins" class="section level2">
+<h2>Using <code>add_coins()</code></h2>
+<div id="prerequisites" class="section level3">
+<h3>Prerequisites</h3>
+<ul>
+<li>A completed Quarto blog post in
+<code>posts/your-post/index.qmd</code></li>
+<li>A <code>_quarto.yml</code> file in your blog’s root directory with
+at least <code>site-url:</code> specified</li>
+</ul>
+</div>
+<div id="basic-usage" class="section level3">
+<h3>Basic Usage</h3>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(qpost)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="co"># Add COinS to the currently open post in RStudio</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="fu">add_coins</span>()</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="co"># Or specify a file path explicitly</span></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="fu">add_coins</span>(<span class="at">file_path =</span> <span class="st">&quot;posts/my-post/index.qmd&quot;</span>)</span></code></pre></div>
+</div>
+<div id="what-happens" class="section level3">
+<h3>What Happens</h3>
+<p>When you call <code>add_coins()</code>, it:</p>
+<ol style="list-style-type: decimal">
+<li><strong>Reads your post’s YAML</strong> — extracts title, author,
+date, categories, description</li>
+<li><strong>Queries <code>_quarto.yml</code></strong> — reads site URL
+and language settings</li>
+<li><strong>Applies auto-resolution</strong> — fills gaps from
+<code>_quarto.yml</code> and <code>.Rprofile</code> options</li>
+<li><strong>Generates COinS metadata</strong> — creates key-value pairs
+(title, author, date, language, license, etc.)</li>
+<li><strong>Appends a hidden R code chunk</strong> to render the COinS
+<code>&lt;span&gt;</code> at the end of your post</li>
+<li><strong>Opens the edited file</strong> — so you can review and
+commit</li>
+</ol>
+</div>
+<div id="what-gets-generated" class="section level3">
+<h3>What Gets Generated</h3>
+<p>At the bottom of your <code>index.qmd</code>,
+<code>add_coins()</code> appends:</p>
+<p><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal&amp;rft.genre=blogPost&amp;rft.atitle=My%20Amazing%20Discovery&amp;rft.au=Peter%20Baumgartner&amp;rft.date=2026-08-22&amp;rft.description=A%20brief%20summary...&amp;rft.language=en&amp;rft.keywords=research%2Cdata%20science&amp;rft.license=CC-BY-4.0"></span></p>
+<p>This code: - Uses an R chunk with <code>echo: false</code> and
+<code>results: asis</code> so it’s invisible to readers - Outputs the
+COinS <code>&lt;span&gt;</code> as raw HTML - Is placed <strong>at the
+end</strong> of your post, so Zotero sees the complete content first</p>
+</div>
+</div>
+<div id="configuration" class="section level2">
+<h2>Configuration</h2>
+<p>By default, <code>add_coins()</code> reads everything it needs from
+your post YAML and <code>_quarto.yml</code>. You only need to configure
+<code>.Rprofile</code> for optional fallback values:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># Project-level .Rprofile (in your blog&#39;s root directory)</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="fu">options</span>(</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>  <span class="at">qpost.lang =</span> <span class="st">&quot;en&quot;</span>,           <span class="co"># Fallback language if not in post or _quarto.yml</span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>  <span class="at">qpost.license =</span> <span class="st">&quot;CC-BY-4.0&quot;</span>  <span class="co"># License code for all posts</span></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>)</span></code></pre></div>
+<div id="auto-resolution-priority" class="section level3">
+<h3>Auto-resolution Priority</h3>
+<p>For each field, <code>add_coins()</code> looks in this order:</p>
+<ol style="list-style-type: decimal">
+<li><strong>Post YAML</strong> (e.g., <code>lang:</code>,
+<code>license:</code> in your post’s front matter)</li>
+<li><strong><code>_quarto.yml</code></strong> (e.g., <code>lang:</code>
+in your blog config)</li>
+<li><strong><code>.Rprofile</code> options</strong> (e.g.,
+<code>getOption(&quot;qpost.lang&quot;)</code>,
+<code>getOption(&quot;qpost.license&quot;)</code>)</li>
+<li><strong>Omitted</strong> if not found anywhere</li>
+</ol>
+<p>This design means: - Most of the time, you don’t need
+<code>.Rprofile</code> setup — your post YAML and
+<code>_quarto.yml</code> suffice - Set <code>qpost.license</code> once
+in <code>.Rprofile</code> to apply it to all posts automatically -
+Post-level values always override defaults</p>
+<hr />
+</div>
+</div>
+<div id="editing-coins-after-creation" class="section level2">
+<h2>Editing COinS After Creation</h2>
+<p>The COinS span is just an R code chunk at the end of your post. You
+can:</p>
+<ol style="list-style-type: decimal">
+<li><strong>Edit it manually</strong> — change metadata values directly
+in the <code>title</code> attribute</li>
+<li><strong>Regenerate it</strong> — delete the chunk and run
+<code>add_coins()</code> again</li>
+<li><strong>Remove it</strong> — delete the chunk entirely (though this
+defeats the purpose!)</li>
+</ol>
+<p>To re-run <code>add_coins()</code> on an existing post: 1. Delete the
+<code>coins</code> code chunk at the bottom 2. Run
+<code>add_coins(file_path = &quot;posts/your-post/index.qmd&quot;)</code> 3.
+Review and commit the changes</p>
+<hr />
+</div>
+<div id="backup-mode" class="section level2">
+<h2>Backup Mode</h2>
+<p>By default, <code>add_coins(backup = TRUE)</code> creates a backup of
+your post before modifying it:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">add_coins</span>(<span class="at">file_path =</span> <span class="st">&quot;posts/my-post/index.qmd&quot;</span>, <span class="at">backup =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p>This creates a file like <code>posts/my-post/index.qmd.bak</code> as
+a safety measure. If something goes wrong, you can restore the
+original.</p>
+<p>To disable backups:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">add_coins</span>(<span class="at">file_path =</span> <span class="st">&quot;posts/my-post/index.qmd&quot;</span>, <span class="at">backup =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<hr />
+</div>
+<div id="testing-your-coins" class="section level2">
+<h2>Testing Your COinS</h2>
+<p>Once you’ve added COinS to a post, you can test it:</p>
+<ol style="list-style-type: decimal">
+<li><strong>Render your blog</strong> with <code>quarto preview</code>
+or <code>quarto render</code></li>
+<li><strong>Open the post in your browser</strong></li>
+<li><strong>Install Zotero</strong> browser extension (if you haven’t
+already) from <a href="https://www.zotero.org/download/">zotero.org</a></li>
+<li><strong>Click the Zotero save icon</strong> in your browser address
+bar</li>
+<li><strong>Verify the metadata</strong> — Zotero should pre-fill the
+title, author, date, and other fields automatically</li>
+</ol>
+<p>If the save icon doesn’t appear, check that: - The HTML output
+contains the COinS <code>&lt;span&gt;</code> (view page source in your
+browser) - The metadata in the <code>title</code> attribute is properly
+URL-encoded - Your Zotero browser extension is enabled</p>
+<hr />
+</div>
+<div id="background-what-is-coins" class="section level2">
+<h2>Background: What is COinS?</h2>
+<p><strong>COinS</strong> stands for <strong>ContextObjects in
+Spans</strong>. It’s a simple, standardized way to embed bibliographic
+metadata directly into HTML pages so that specialized software can read
+and extract it.</p>
+<p>Think of it like this: when you visit a website, humans see the text
+and can understand what a blog post is about. But reference managers
+like Zotero need machine-readable metadata to know the title, author,
+publication date, and other citation details without requiring manual
+data entry.</p>
+<p>COinS solves this by embedding bibliographic information in an
+invisible HTML <code>&lt;span&gt;</code> element on your page. When
+Zotero visits your blog post, it detects the COinS metadata and can
+automatically add the post to your library with all the correct fields
+filled in.</p>
+<hr />
+</div>
+<div id="why-use-coins" class="section level2">
+<h2>Why Use COinS?</h2>
+<p>With COinS, you provide metadata from your blog posts to software
+tools like bibliography managers, enabling automatic retrieval and
+making it easier to cite your articles correctly.</p>
+<div id="the-problem" class="section level3">
+<h3>The Problem</h3>
+<p>Without COinS, reference manager have to guess your post’s metadata
+by examining the HTML structure. This often fails for blog posts
+because:</p>
+<ul>
+<li>Blog post titles might be in an <code>&lt;h1&gt;</code> tag, but so
+might many other things</li>
+<li>The publication date might be hidden in an obscure
+<code>&lt;time&gt;</code> element or embedded in a longer text
+string</li>
+<li>Authors are rarely marked up consistently across different blog
+platforms</li>
+<li>Categories or tags have no standard HTML representation</li>
+</ul>
+</div>
+<div id="the-solution" class="section level3">
+<h3>The Solution</h3>
+<p>COinS eliminates guessing. When you add a COinS span to your post,
+reference manager and many other bibliography software and services
+can:</p>
+<ol style="list-style-type: decimal">
+<li><strong>Automatically detect the post’s metadata</strong> — no
+manual entry needed</li>
+<li><strong>Save the post to your personal library</strong> — with
+correct author, date, title, and keywords</li>
+<li><strong>Use correct citation formatting</strong> — because software
+or service knows the post is a blog article, not a book or journal
+article</li>
+<li><strong>Reference it in your writing</strong> — The software
+generates correct citations in your preferred style (Chicago, APA,
+etc.)</li>
+</ol>
+<p>This is especially valuable for academic writers who rely on
+reference managers for literature management.</p>
+<hr />
+</div>
+</div>
+<div id="the-standard-behind-coins" class="section level2">
+<h2>The Standard Behind COinS</h2>
+<p>COinS is based on the <strong>OpenURL</strong> standard (ANSI/NISO
+Z39.88-2004), which was originally designed to help libraries link users
+to full-text content. The “ContextObject” is the standardized metadata
+package at the heart of OpenURL.</p>
+<p>The clever part of COinS is that it <strong>embeds an OpenURL
+ContextObject invisibly in HTML</strong> using a
+<code>&lt;span&gt;</code> element:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">span</span><span class="ot"> class</span><span class="op">=</span><span class="st">&quot;Z3988&quot;</span><span class="ot"> title</span><span class="op">=</span><span class="st">&quot;ctx_ver=Z39.88-2004</span><span class="er">&amp;</span><span class="st">rft.title=...</span><span class="er">&amp;</span><span class="st">rft.au=...&quot;</span><span class="dt">&gt;&lt;/</span><span class="kw">span</span><span class="dt">&gt;</span></span></code></pre></div>
+<p>The <code>class=&quot;Z3988&quot;</code> tells processors like Zotero that this
+span contains COinS metadata. The actual data is in the
+<code>title</code> attribute (which is counterintuitive—it’s not
+displayed as a tooltip; it’s just a container for the encoded
+metadata).</p>
+<div id="why-a-span" class="section level3">
+<h3>Why a span?</h3>
+<p>Using a <code>&lt;span&gt;</code> allows COinS metadata to be placed
+anywhere in a web page without breaking the HTML structure or being
+visible to human readers. Other approaches (like storing metadata in
+<code>&lt;meta&gt;</code> tags in the page’s <code>&lt;head&gt;</code>)
+are more restrictive—you can only have one set of metadata per page.
+With COinS, you can embed metadata for multiple items on the same
+page.</p>
+<hr />
+</div>
+</div>
+<div id="websites-using-coins" class="section level2">
+<h2>Websites Using COinS</h2>
+<p>COinS has been adopted by many major platforms and content
+providers:</p>
+<ul>
+<li><strong>Wikipedia</strong> — embedded in citation templates and
+bibliographic data</li>
+<li><strong>Academic repositories</strong> — <a href="https://citeulike.org/">CiteULike</a>, <a href="https://www.semanticscholar.org/">Semantic Scholar</a>, <a href="https://pmc.ncbi.nlm.nih.gov/">PubMed Central</a>, <a href="https://pubmed.ncbi.nlm.nih.gov/">PubMed</a>, <a href="https://www.researchgate.net/">ResearchGate</a></li>
+<li><strong>Bibliography managers</strong> — <a href="https://www.zotero.org/">Zotero</a>, <a href="https://zbib.org/">ZoteroBib</a>, <a href="https://bibdesk.sourceforge.io/">BibDesk</a>, <a href="https://www.mendeley.com/">Mendeley</a>, <a href="https://lumivero.com/products/citavi/">Citavi</a></li>
+<li><strong>Library catalogs</strong> — <a href="https://discover.libraryhub.jisc.ac.uk/">Library Hub Discover</a>,
+<a href="https://search.worldcat.org/">WorldCat</a>, <a href="https://vufind.org/vufind/">VuFind</a></li>
+<li><strong>Publishing platforms</strong> — WordPress blogs,
+Institutional repositories</li>
+<li><strong>Specialized services</strong> — Zotero itself can generate
+COinS for shared bibliographies</li>
+</ul>
+<hr />
+</div>
+<div id="how-zotero-uses-coins" class="section level2">
+<h2>How Zotero Uses COinS</h2>
+<p>When you’re browsing a blog post with COinS in your Zotero-enabled
+browser:</p>
+<ol style="list-style-type: decimal">
+<li>Zotero’s browser extension scans the page and finds the
+<code>&lt;span class=&quot;Z3988&quot;&gt;</code> element</li>
+<li>It decodes the embedded metadata</li>
+<li>It displays a <strong>save icon</strong> (📖) in your browser
+address bar, indicating that Zotero can capture the page</li>
+<li>You click the icon to save the post to your library</li>
+<li>Zotero populates the entry with all the metadata from COinS: title,
+author, date, description, etc.</li>
+</ol>
+<p>Without COinS, Zotero might not recognize the page as a citable item,
+and you’d have to manually enter all the metadata.</p>
+<hr />
+</div>
+<div id="integration-with-academic-workflow" class="section level2">
+<h2>Integration with Academic Workflow</h2>
+<p>COinS is particularly valuable if you:</p>
+<ul>
+<li><strong>Write papers that cite your own blog posts</strong> — Zotero
+can cite them with proper formatting</li>
+<li><strong>Build a personal knowledge base</strong> — Zotero can
+organize your posts alongside other research</li>
+<li><strong>Share research</strong> — Others can easily add your posts
+to their Zotero libraries</li>
+<li><strong>Track citations</strong> — Zotero note-taking features work
+with your posts as regular bibliographic items</li>
+</ul>
+<hr />
+</div>
+<div id="further-reading" class="section level2">
+<h2>Further Reading</h2>
+<ul>
+<li><a href="https://www.niso.org/publications/z3988-2004-r2010">OpenURL
+Standard (Z39.88-2004)</a> — The official specification</li>
+<li><a href="https://web.archive.org/web/20161223121044/http://www.ocoins.info/">COinS
+Specification (Wayback Archive)</a> — Original COinS documentation</li>
+<li><a href="https://www.zotero.org/download/">Zotero Browser
+Extension</a> — Download and documentation</li>
+<li><a href="https://www.zotero.org/support/adding_items_to_zotero">Zotero
+Support: Saving Items</a> — How Zotero captures web content</li>
+</ul>
+<hr />
+</div>
+<div id="see-also" class="section level2">
+<h2>See Also</h2>
+<ul>
+<li><a href="../reference/qpost.html"><code>qpost()</code></a> — Create
+new Quarto blog posts interactively</li>
+<li><a href="https://quarto.org/docs/websites/website-blog.html">Quarto
+Blog Documentation</a> </content></li>
+</ul>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
