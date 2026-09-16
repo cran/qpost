@@ -1,6 +1,6 @@
 Package: qpost
 Title: Create a 'Quarto' Blog Post
-Version: 1.0.0
+Version: 1.1.0
 Authors@R: 
     person("Peter", "Baumgartner", , "petzi53@gmail.com", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0003-4526-8791"))
@@ -19,9 +19,9 @@ VignetteBuilder: knitr
 Config/testthat/edition: 3
 Config/roxygen2/version: 8.1.0
 NeedsCompilation: no
-Packaged: 2026-09-03 15:33:56 UTC; petzi
+Packaged: 2026-09-16 18:02:40 UTC; petzi
 Author: Peter Baumgartner [aut, cre, cph] (ORCID:
     <https://orcid.org/0000-0003-4526-8791>)
 Maintainer: Peter Baumgartner <petzi53@gmail.com>
 Repository: CRAN
-Date/Publication: 2026-09-12 15:20:02 UTC
+Date/Publication: 2026-09-16 23:30:21 UTC
